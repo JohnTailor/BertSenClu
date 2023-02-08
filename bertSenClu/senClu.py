@@ -2,9 +2,9 @@
 import numpy as np,os,pickle
 import multiprocessing
 from multiprocessing import Pool
-import sys
-sys.path.append('bertSenClu') #for visutils import
-import visUtils
+#import sys
+#sys.path.append('bertsenclu') #for visutils import
+from bertsenclu import visUtils
 
 #PyTorch
 import pandas as pd
@@ -268,10 +268,10 @@ class SenClu():
         nFailed=0
         for i,d in enumerate(docs_segmented):
             if len(d)==0:
-                if self.verbose and nFailed<40: print("Sentence embedded doc is empty, removing it (e.g., only 'return characters' etc.); Original doc ID",i," Original doc length:",len(docs[i]), " Content (enclosed in --):  --"+docs[i]+"--")
+                if self.verbose and nFailed<5: print(" Removing empty sentence embedded doc; Original doc ID",i," Original length:",len(docs[i]), ("" if len(docs[i])==0 else "Content enclosed in '--' (e.g., it might contain only 'return characters'):  --"+docs[i]+"--"))
                 nFailed+=1
             else: filtered_docs.append(d)
-        if nFailed>0: print(" Number of empty sentenced embedded docs:",nFailed, "  (Use verbose option to see docs")
+        if nFailed>0: print(" Number of empty sentenced embedded docs:",nFailed, ("  (Use verbose option to see first 5 docs)" if not self.verbose else ""))
         if self.verbose: print("Embed sentences using a sentence embedder; Total Docs: ",len(filtered_docs))
         #get Sentence Embeddings -> this can be parallelized
         model = SentenceTransformer('all-MiniLM-L6-v2', device=device)
@@ -367,7 +367,7 @@ class SenClu():
 
 
 
-    def saveOutputs(self, folder="Bert-SenClu", topWordPerTopic=10, topSenPerTopic=10, topDocsPerTopic=10, maxSenPerDoc=50, addTopicMarkup=True):
+    def saveOutputs(self, folder="Bert-SenClu", topWordPerTopic=10, topSenPerTopic=10, topDocsPerTopic=10, maxSenPerDoc=50, addTopicMarkup=True,createVisual=True):
         """
         Produce csv and visualization files and store in given folder; The csv can also be used for exploration and visualization
         A topic contains a probability, top words (each with probability), top sentences (each with score), top documents for that topic (full docs, only topic sentences, topic sentences with context); each doch has a score and an ID of the original document in the dataset fed into the topic model)
@@ -383,9 +383,11 @@ class SenClu():
         topDocsPerTopic=20 ... number of top documents per topic
         maxSenPerDoc=100 ... maximum number of displayed sentences per document
         addTopicMarkup=True ... for a top document of a topic, highlight sentences belonging to topic
+        createVisual=True ... create and store visualization files
         Returns:
         None (stores files in given folder)
         """
+        if self.verbose: print("Creating and storing Outputs")
         #get data
         senPerTop=self.getTopSentencesPerTopic(topSenPerTopic)
         docPerTop=self.getTopDocsPerTopic(topDocsPerTopic)
@@ -456,8 +458,10 @@ class SenClu():
 
 
         #Create visualization of topics
-        visUtils.hierarchy(folder, nvec, df["TopicShort"].values)
-        visUtils.tsne(self, nvec, folder, df["TopicShort"].values)
+        if createVisual:
+            if self.verbose: print("Creating Visualizations")
+            visUtils.hierarchy(folder, nvec, df["TopicShort"].values)
+            visUtils.tsne(self, nvec, folder, df["TopicShort"].values)
 
 
 

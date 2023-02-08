@@ -18,13 +18,19 @@ def parse_args(args):
 
 @st.cache
 def get_data(folder):
+    def isfloat(num):
+        try:
+            float(num)
+            return True
+        except ValueError:
+            return False
     csvfile=folder+"/topic_all_info.csv"
     if not os.path.exists(csvfile):
         print("ERROR cannot find the csvfile",csvfile)
         print("Either file is not existing or path to file is incorrect; Default path is ",os.getcwd())
-    df=pd.read_csv(csvfile) #,header=0
+    df=pd.read_csv(csvfile)
     colW=[c for c in df.columns if c.startswith("Word_")]
-    df["TopW"] = df.apply(lambda r: ", ".join(r[colW])[:2000], axis=1)
+    df["TopW"] = df.apply(lambda r: ", ".join([str(w) for w in r[colW] if not isfloat(w)])[:2000], axis=1) #filter nans
     return df
 
 
@@ -66,7 +72,16 @@ with col3:
 
 
 from PIL import Image
-image = Image.open(cargs.folder+'/topic_visual_hierarchy.png')
-st.image(image, caption='Topic Hierarchy')
-image = Image.open(cargs.folder+'/topic_visual_tsne.png')
-st.image(image, caption='TSNE Clustering')
+fname=cargs.folder+'/topic_visual_hierarchy.png'
+if os.path.exists(fname):
+    image = Image.open(fname)
+    st.image(image, caption='Topic Hierarchy')
+else:
+    st.write("Visualization not found. Did you use 'createVisual=True' in saveOutputs?", fname)
+
+fname=cargs.folder+'/topic_visual_tsne.png.png'
+if os.path.exists(fname):
+    image = Image.open(fname)
+    st.image(image, caption='TSNE Clustering')
+else:
+    st.write("Visualization not found. Did you use 'createVisual=True' in saveOutputs?", fname)

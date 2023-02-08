@@ -37,7 +37,7 @@ from bertSenClu import senClu
 
 docs = fetch_20newsgroups(subset='train', remove=('headers', 'footers', 'quotes'))  # get raw data    
 
-folder = "bertSenCluOutputs/"
+folder = "modelOutputs/"
 topic_model= senClu.SenClu()
 topics, probs = topic_model.fit_transform(docs, nTopics=20, loadAndStoreInFolder=folder)
 
@@ -68,21 +68,23 @@ Topic 3 [patient, hiv, disease, infection, candida, vitamin, antibiotic, diet, s
 
 We can also use an interactive tool for visualization and topic analysis that runs in a browser. It can be called command line with the folder containing topic modeling outputs:
 
+You need to **download** the [**visual.py**](https://github.com/JohnTailor/BertSenClu/blob/main/visual.py) from the repo first
+
 ```console
-streamlit run visual.py -- --folder "BertSenCluOutputs/"
+streamlit run visual.py -- --folder "modelOutputs/"
 ```
 
 It can also be called from python:
 
 ```python
 import subprocess
-folder = "BertSenCluOutputs/"
+folder = "modelOutputs/"
 subprocess.run("streamlit run visual.py -- --folder "+folder,shell=True)
 ```
 
 The interactive visualization looks like this:
 
-<img src="https://github.com/JohnTailor/BertSenClu/blob/main/images/visual.PNG" width="60%" height="60%" align="center" />
+<img src="https://github.com/JohnTailor/BertSenClu/blob/main/images/visual.PNG" width="100%" height="100%" align="center" />
 
 If you scroll down (or look into the folder where you stored outputs), you see topic relationship information as well, i.e., a TSNE visualization and a hierarchical clustering of topics:
 

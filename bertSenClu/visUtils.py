@@ -37,10 +37,8 @@ def hierarchy(folder,nvec, labs): #BASED on https://scikit-learn.org/stable/auto
     plt.tight_layout()
     plt.savefig(folder + "/topic_visual_hierarchy.png")
 
-from visUtils import hierarchy
+
 def tsne(topic_model,nvec,folder,topicShort):
-
-
     topVis = TSNE(perplexity=min(8, topic_model.ntopics - 1))
     tsneX = topVis.fit_transform(nvec)
     dpi = 96

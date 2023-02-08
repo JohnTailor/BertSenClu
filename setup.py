@@ -8,7 +8,7 @@ base_packages = [
     "sentence-transformers>=0.4.1",
     "streamlit>=1.17.0",
     "pysbd>=0.3.4",
-    "pytorch>=1.11.0"
+    "torch>=1.11.0"
 ]
 
 with open("README.md", "r") as fh:
@@ -16,10 +16,10 @@ with open("README.md", "r") as fh:
 
 setup(
    name='bertsenclu',
-   version='0.1.2',
+   version='0.1.8',
    author='Johannes Schneider',
    author_email='vollkoff@gmail.com',
-   packages=['bertSenClu'],
+   packages=['bertsenclu'],
    #packages=find_packages(exclude=["notebooks", "docs"]),
    url='https://github.com/JohnTailor/BertSenClu',
    project_urls={
