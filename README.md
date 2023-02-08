@@ -9,27 +9,24 @@
 
 # Bert-SenClu
 
-(Bert-)SenClu is a topic modeling technique that leverages sentence transformers to compute topic models. For once, it differs from other topic models by using sentences as unit of analysis, i.e., a sentence is assigned to a topic and not a word (like for LDA, TKM) or an entire document (BertTopic). 
+**(Bert-)SenClu** is a topic modeling technique that leverages sentence transformers to compute topic models. For once, it differs from other topic models by using sentences as unit of analysis, i.e., a sentence is assigned to a topic and not a word (like for LDA, TKM) or an entire document (BertTopic). 
 Methods that treat documents as a unit can be faster but they only assign the entire document to one topic, which is different from most classical topic models that produce a document-topic distribution, i.e., a document can contain multiple documents. Our topic model also does not do a dimensionality reduction of embeddings. Inference is based on expectation-maximization, e.g., like for TKM (see [**TKM Paper**](https://arxiv.org/abs/1710.02650) and [**TKM Code**](https://github.com/JohnTailor/tkm)).
 
-Details can be found in the [Bert-SenClu Paper](https://arxiv.org/abs/2302.03106).
+For an in-depth overview of the features of **Bert-SenClu**
+you can check the [**repository**](https://github.com/JohnTailor/BertSenClu/) or the paper [**the paper**](https://arxiv.org/abs/2302.03106).
 
-<img src="https://github.com/JohnTailor/BertSenClu/images/comp.png" width="60%" height="60%" align="center" />
 
-The paper will be on Arxiv.org soon.
+<img src="https://github.com/JohnTailor/BertSenClu/blob/main/images/comp.png" width="60%" height="60%" align="center" />
+
 
 ## Installation
 
-Installation, with sentence-transformers, can be done using [pypi](https://pypi.org/project/bertopic/):
+Installation, with sentence-transformers, can be done using [pypi](https://pypi.org/project/bertsenclu/):
 
 ```bash
-pip install berSenClu
+pip install bertsenclu
 ```
-
-## Getting Started
-For an in-depth overview of the features of Bert-SenClu
-you can check the [**repository**](https://github.com/JohnTailor/BertSenClu/) or the paper [**the paper**](https://arxiv.org/abs/2302.03106).
-
+    
 ## Quick Start
 We start by extracting topics from the 20 newsgroups dataset containing English documents:
 
@@ -40,11 +37,9 @@ from bertSenClu import senClu
 
 docs = fetch_20newsgroups(subset='train', remove=('headers', 'footers', 'quotes'))  # get raw data    
 
-nTopics = 30
-folder = "BertSenCluOutputs/"
-topic_model = senClu.SenClu()
-topics, probs = topic_model.fit_transform(docs, nTopics=nTopics, alpha=0.5 / np.sqrt(nTopics), nEpochs=20,
-                                          loadAndStoreInFolder=folder)
+folder = "bertSenCluOutputs/"
+topic_model= senClu.SenClu()
+topics, probs = topic_model.fit_transform(docs, nTopics=20, loadAndStoreInFolder=folder)
 
 
 ```
@@ -55,8 +50,10 @@ After generating topics and their probabilities, we can save outputs:
 >> topic_model.saveOutputs(folder) #Save outputs in folder, i.e. csv-file and visualizations
 ```
 
+and look at topics
+
 ```python
-or look at topics
+
 
 >>for it,t in enumerate(topics):
     print("Topic",it,t[:10])
@@ -78,8 +75,6 @@ streamlit run visual.py -- --folder "BertSenCluOutputs/"
 It can also be called from python:
 
 ```python
- 
-
 import subprocess
 folder = "BertSenCluOutputs/"
 subprocess.run("streamlit run visual.py -- --folder "+folder,shell=True)
@@ -87,12 +82,12 @@ subprocess.run("streamlit run visual.py -- --folder "+folder,shell=True)
 
 The interactive visualization looks like this:
 
-<img src="https://github.com/JohnTailor/BertSenClu/images/visual.PNG" width="60%" height="60%" align="center" />
+<img src="https://github.com/JohnTailor/BertSenClu/blob/main/images/visual.PNG" width="60%" height="60%" align="center" />
 
 If you scroll down (or look into the folder where you stored outputs), you see topic relationship information as well, i.e., a TSNE visualization and a hierarchical clustering of topics:
 
-<img src="https://github.com/JohnTailor/BertSenClu/images/topic_visual_hierarchy.png" width="60%" height="60%" align="center" />
-<img src="https://github.com/JohnTailor/BertSenClu/images/topic_visual_tsne.png" width="60%" height="60%" align="center" />
+<img src="https://github.com/JohnTailor/BertSenClu/blob/main/images/topic_visual_hierarchy.png" width="60%" height="60%" align="center" />
+<img src="https://github.com/JohnTailor/BertSenClu/blob/main/images/topic_visual_tsne.png" width="60%" height="60%" align="center" />
 
 
 We can also access outputs directly by accessing functions from the model
@@ -115,24 +110,22 @@ First 4 sentences for top doc for topic 0 (['[...]>\n', '[...]>\n\n', "If the da
 Top 3 sentences for topic 1  [('enforcement.\n\n    ', 0.22597079), ('Enforcement.  ', 0.22597079), ('to the Constitution.\n\n   ', 0.22434217)]
 #The sentences show that the sentence partitioning algorithm used is not the best... (It splits based on carriage returns. Still topic modeling results are good. It's also easy to use another one, or preprocess the data    
 
-The `-1` topic refers to all outlier documents and are typically ignored. Next, let's take a look at the most 
-frequent topic that was generated:
 ```
 
 
 ## How it works
-The steps for topic modeling with Bert-SenClu are
+The steps for topic modeling with **Bert-SenClu** are
 <ol>
   <li>Splitting docs into sentences</li>  
   <li>Embedding the sentences using pretrained sentence-transformers</li>
   <li>Running the topic modeling</li>
   <li>Computing topic-word distributions based on sentence to topic assignments</li>
 </ol>
-The outcomes of the first two steps are stored in a user-provided folder if parameter "loadAndStoreInFolder" is set explicitly in "fit_transform". By default it is None.  SenClu can reuse the stored precomputed sentence partitionen and embeddings, which speeds up re-running the topic modeling, e.g., if you want to change the number of topics. However, if you alter the data, you need to delete the folder containing the data. We will further work on speeding the inference up. 
+The outcomes of the first two steps are stored in a user-provided folder if parameter "loadAndStoreInFolder" is set explicitly in "fit_transform". By default this is not the case (i.e., "loadAndStoreInFolder"=None).  **Bert-SenClu** can reuse the stored precomputed sentence partitionen and embeddings, which speeds up re-running the topic modeling, e.g., if you want to change the number of topics. However, if you alter the data, you need to delete the folder, i.e., the files with the precomputed sentence embeddings and partitionings.  
  
-You can change each algorithm in these steps, especially the algorithm for sentence partitioning as well as the pre-trained sentence embedder. As you saw in the example, the sentence partitioning is not great for the newsgroup dataset, but it still works well.
+You can change each algorithm in these steps, especially the algorithm for sentence partitioning as well as the pre-trained sentence embedder. As you saw in the example, the used algorithm for sentence partitioning is not that great for the newsgroup dataset, but the overall result is still good.
 
-A user can choose parameter "alpha", which guides the algorithm on how many topics a document should contain. Setting it 0, means that we want few topics. Setting it to 1 (or larger) means we want many. By default we recommend to something like 0.5/sqrt(nTopics). 
+The (main) function "fit_transform" has a hyperparameter "alpha" (similar to other models like LDA), which guides the algorithm on how many topics a document should contain. Setting it 0, means that a document likely has few topics. Setting it to 1 (or larger) means it is more likely to have many (for longer documents). As default, you can use 0.5/sqrt(nTopics). 
 
 
 ## Citation

@@ -15,7 +15,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(
-   name='bertSenClu',
+   name='bertsenclu',
    version='0.1.2',
    author='Johannes Schneider',
    author_email='vollkoff@gmail.com',

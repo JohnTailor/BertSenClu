@@ -10,10 +10,9 @@ if __name__ == '__main__':
     docs = fetch_20newsgroups(subset='train', remove=('headers', 'footers', 'quotes')).data #get raw data
     # docs,_= sampleData.get20NewsData() #get data with some pre-processing
 
-    nTopics = 20
     folder = "bertSenCluOutputs/"
     topic_model= senClu.SenClu()
-    topics,probs=topic_model.fit_transform(docs, nTopics=nTopics, alpha=0.5/np.sqrt(nTopics), nEpochs=20, loadAndStoreInFolder=folder)
+    topics, probs = topic_model.fit_transform(docs, nTopics=20, loadAndStoreInFolder=folder)
 
     topic_model.saveOutputs(folder)  # Save outputs in folder, i.e. csv-file and visualizations
 

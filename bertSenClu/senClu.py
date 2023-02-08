@@ -289,7 +289,7 @@ class SenClu():
         return filtered_docs,docs_sentenceEncoded
 
 
-    def fit_transform(self, docs, nTopics=50, alpha=1, nEpochs=40, loadAndStoreInFolder=None, verbose=True):
+    def fit_transform(self, docs, nTopics=50, alpha=None, nEpochs=40, loadAndStoreInFolder=None, verbose=True):
         """
         Compute topic_model given raw text docs, optional: stores partial sentence embeddings for recomputation with other parameters
         --------------------
@@ -303,6 +303,7 @@ class SenClu():
         topics...list of topics, each topic contains a list of "ntopwords" words sorted in descending order by relevance
         probs...topic probabilities
         """
+        if alpha is None: alpha=1/np.sqrt(nTopics)
         if self.device=='auto':
             device='cuda' if torch.cuda.is_available() else 'cpu'
         self.verbose=verbose
